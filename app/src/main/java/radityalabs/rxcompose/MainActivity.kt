@@ -3,21 +3,31 @@ package radityalabs.rxcompose
 import android.os.Bundle
 import android.support.design.widget.Snackbar
 import android.support.v7.app.AppCompatActivity
+import android.util.Log
 import android.view.Menu
 import android.view.MenuItem
 
 import kotlinx.android.synthetic.main.activity_main.*
 
-class MainActivity : AppCompatActivity() {
+class MainActivity : AppCompatActivity(), MainContract.View {
+    companion object {
+        val TAG = MainActivity::class.java.simpleName
+    }
+
+    private lateinit var mPresenter: MainContract.Presenter
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
         setSupportActionBar(toolbar)
 
-        fab.setOnClickListener { view ->
-            Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
-                    .setAction("Action", null).show()
+        mPresenter = MainPresenter(this)
+    }
+
+    override fun onPostCreate(savedInstanceState: Bundle?) {
+        super.onPostCreate(savedInstanceState)
+        fab.setOnClickListener {
+            mPresenter.doSomeWork()
         }
     }
 
@@ -31,5 +41,25 @@ class MainActivity : AppCompatActivity() {
             R.id.action_settings -> true
             else -> super.onOptionsItemSelected(item)
         }
+    }
+
+    override fun showCompleteWork(status: String) {
+        Log.d(TAG, "completed $status")
+    }
+
+    override fun showLoading() {
+        Log.d(TAG, "showLoading")
+    }
+
+    override fun hideLoading() {
+        Log.d(TAG, "hideLoading")
+    }
+
+    override fun showAfterWork(number : Double) {
+        Log.d(TAG, "after $number")
+    }
+
+    override fun showBeforeWork(number : Double) {
+        Log.d(TAG, "before $number")
     }
 }
